@@ -98,15 +98,6 @@ namespace LoadEnv.Utils
 
         }
 
-        public static List<string> Branches(string? url)
-        {
-            return Repository.ListRemoteReferences(url)
-                         .Where(elem => elem.IsLocalBranch)
-                         .Select(elem => elem.CanonicalName
-                                             .Replace("refs/heads/", ""))
-                         .ToList();
-        }
-
         private static void DeleteDirectory(string directory)
         {
             foreach (string subdirectory in Directory.EnumerateDirectories(directory))
