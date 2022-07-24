@@ -11,12 +11,12 @@ string directory = AppDomain.CurrentDomain.BaseDirectory;
 
 Settings s = new Settings
 {
-    Url = "",
+    Url = "https://github.com/danijerez/envload",
     Password = "",
     Username = "",
     Workspace = directory + "workspace",
-    Branch = "",
-    Proyect = "",
+    Branch = "envs",
+    Proyect = "envload",
     PathSettings = directory + "data",
     NameSettings = "settings.bin"
 };

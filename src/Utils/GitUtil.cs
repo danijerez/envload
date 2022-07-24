@@ -75,6 +75,9 @@ namespace LoadEnv.Utils
 
         private static void InyectEnviroments(ListView listFiles, bool clear, ProgressBar p)
         {
+            if (listFiles.Source == null)
+                return;
+
             var text = !clear ? "injected" : "deleted";
             var list = listFiles.Source.ToList();
             var select = list[listFiles.SelectedItem];
@@ -83,28 +86,37 @@ namespace LoadEnv.Utils
                 var path = select.ToString();
                 if (path != null && !path.Equals(""))
                 {
-                    using (StreamReader r = new StreamReader(path))
+                    try
                     {
-                        
-                        EnvironmentJson? source = JsonSerializer.Deserialize<EnvironmentJson>(r.ReadToEnd());
-                        if (source != null && source.values != null)
+                        using (StreamReader r = new StreamReader(path))
                         {
-                            for (var i = 0; i < source.values.Count(); i++)
-                            {
-                                var name = source.values[i].name;
-                                if (name != null)
-                                    Environment.SetEnvironmentVariable(name, !clear ? source.values[i].value : null, EnvironmentVariableTarget.Machine);
-                                p.Fraction += (float)i / (float)source.values.Count();
-                                
-                            }
 
-                            int result = MessageBox.Query(100, source.values.Count() + 4, "Info", $"Environment variables {text} in system: " +
-                                $"{string.Concat(source.values.Select((a) => string.Format("\n[{0}]:[{1}]", a.name, a.value)))}", "ok");
-                            
-                            if (result.Equals(0))
-                                p.Fraction = 0;
+                            EnvironmentJson? source = JsonSerializer.Deserialize<EnvironmentJson>(r.ReadToEnd());
+                            if (source != null && source.values != null)
+                            {
+                                for (var i = 0; i < source.values.Count(); i++)
+                                {
+                                    var name = source.values[i].name;
+                                    if (name != null)
+                                        Environment.SetEnvironmentVariable(name, !clear ? source.values[i].value : null, EnvironmentVariableTarget.Machine);
+                                    p.Fraction += (float)i / (float)source.values.Count();
+
+                                }
+
+                                int result = MessageBox.Query(100, source.values.Count() + 4, "Info", $"Environment variables {text} in system: " +
+                                    $"{string.Concat(source.values.Select((a) => string.Format("\n[{0}]:[{1}]", a.name, a.value)))}", "ok");
+
+                                if (result.Equals(0))
+                                    p.Fraction = 0;
+                            }
                         }
+
                     }
+                    catch (Exception e)
+                    {
+                        MessageBox.ErrorQuery(70, 8, "Error", e.Message, "ok");
+                    }
+
                 }
             }
         }
