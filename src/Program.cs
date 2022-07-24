@@ -1,5 +1,4 @@
-﻿
-using LoadEnv.Models;
+﻿using LoadEnv.Models;
 using LoadEnv.Utils;
 using ProtoBuf;
 using Terminal.Gui;
@@ -9,6 +8,7 @@ var top = Application.Top;
 top.ColorScheme = Colors.Base;
 string directory = AppDomain.CurrentDomain.BaseDirectory;
 
+//Example settings
 Settings s = new Settings
 {
     Url = "https://github.com/danijerez/envload",
@@ -23,7 +23,7 @@ Settings s = new Settings
 
 var pathFileSettings = s.PathSettings + @"\" + s.NameSettings;
 
-if(File.Exists(pathFileSettings))
+if (File.Exists(pathFileSettings))
     using (var file = File.OpenRead(pathFileSettings)) { s = Serializer.Deserialize<Settings>(file); }
 else
 {
@@ -31,16 +31,25 @@ else
     FileUtils.Save(pathFileSettings, s);
 }
 
-var p = new ProgressBar()
+var loop = Application.MainLoop;
+
+var pb = new ProgressBar()
 {
     X = 0,
     Y = 1,
     Width = Dim.Fill(),
     Height = Dim.Fill(),
-    ProgressBarFormat = ProgressBarFormat.SimplePlusPercentage,
 };
 
-top.Add(UI.Config(s, p), p);
+loop.AddTimeout(TimeSpan.FromMilliseconds(35), timer);
+
+bool timer(MainLoop caller)
+{
+    pb.Pulse();
+    return true;
+}
+
+top.Add(UI.Config(s), pb);
 
 Application.Run();
 Application.Shutdown();

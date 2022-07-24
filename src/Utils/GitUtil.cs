@@ -1,7 +1,4 @@
-﻿using envload.Models;
-using LibGit2Sharp;
-using LoadEnv.Models;
-using System.Text.Json;
+﻿using LibGit2Sharp;
 using Terminal.Gui;
 
 namespace LoadEnv.Utils
@@ -24,105 +21,7 @@ namespace LoadEnv.Utils
             };
         }
 
-        public static MenuBar Options(TextField username, TextField password, TextField path, TextField url, TextField proyect, TextField branch, ListView listFiles, Settings s, ProgressBar p)
-        {
-            var pathFileSettings = s.PathSettings + @"\" + s.NameSettings;
-            var clone = new MenuItem("_Clone", "clone the configured repository.", () => { Clone(username, password, path, url, proyect, branch, listFiles); });
-            var save = new MenuItem("_Save", "save changes in settings file.", () =>
-            {
-
-                s.Branch = branch.Text.ToString();
-                s.Proyect = proyect.Text.ToString();
-                s.Url = url.Text.ToString();
-                s.Username = username.Text.ToString();
-                s.Password = password.Text.ToString();
-                s.Workspace = path.Text.ToString();
-                FileUtils.Save(pathFileSettings, s);
-
-            });
-
-            var reset = new MenuItem("_Reset", "reset settings fields.", () =>
-            {
-                branch.Text = "";
-                proyect.Text = "";
-                url.Text = "";
-                username.Text = "";
-                password.Text = "";
-                path.Text = "";
-                File.Delete(pathFileSettings);
-
-            });
-
-            var inyect = new MenuItem("_Inyect", "inyect current enviroments selected in system.", () =>
-            {
-                InyectEnviroments(listFiles, false, p);
-            });
-
-            var clear = new MenuItem("_Clear", "clear current enviroments selected in system.", () =>
-            {
-                InyectEnviroments(listFiles, true, p);
-
-            });
-
-            var menu = new MenuBar(new MenuBarItem[] {
-                new MenuBarItem ("_Data", new MenuItem [] { clone }),
-                new MenuBarItem ("_Settings", new MenuItem [] { save, reset }),
-                new MenuBarItem ("_Enviroments", new MenuItem [] { inyect, clear })
-            });
-
-            return menu;
-        }
-
-        private static void InyectEnviroments(ListView listFiles, bool clear, ProgressBar p)
-        {
-            if (listFiles.Source == null)
-                return;
-
-            var text = !clear ? "injected" : "deleted";
-            var list = listFiles.Source.ToList();
-            var select = list[listFiles.SelectedItem];
-            if (select != null)
-            {
-                var path = select.ToString();
-                if (path != null && !path.Equals(""))
-                {
-                    try
-                    {
-                        using (StreamReader r = new StreamReader(path))
-                        {
-
-                            EnvironmentJson? source = JsonSerializer.Deserialize<EnvironmentJson>(r.ReadToEnd());
-                            if (source != null && source.values != null)
-                            {
-                                for (var i = 0; i < source.values.Count(); i++)
-                                {
-                                    var name = source.values[i].name;
-                                    if (name != null)
-                                        Environment.SetEnvironmentVariable(name, !clear ? source.values[i].value : null, EnvironmentVariableTarget.Machine);
-                                    p.Fraction += (float)i / (float)source.values.Count();
-
-                                }
-
-                                int result = MessageBox.Query(100, source.values.Count() + 4, "Info", $"Environment variables {text} in system: " +
-                                    $"{string.Concat(source.values.Select((a) => string.Format("\n[{0}]:[{1}]", a.name, a.value)))}", "ok");
-
-                                if (result.Equals(0))
-                                    p.Fraction = 0;
-                            }
-                        }
-
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.ErrorQuery(70, 8, "Error", e.Message, "ok");
-                    }
-
-                }
-            }
-        }
-
-
-        private static void Clone(TextField usernameField, TextField passwordField, TextField pathField, TextField urlField, TextField proyectField, TextField branchField, ListView listFiles)
+        public static void Clone(TextField usernameField, TextField passwordField, TextField pathField, TextField urlField, TextField proyectField, TextField branchField, ListView listFiles)
         {
 
             string? username = usernameField.Text.ToString();
