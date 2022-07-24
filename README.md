@@ -27,7 +27,10 @@ Environment variables are stored in repositories (public or private) in json fil
 
 I've actually created it for my own use, it's a hassle having to set up a local environment and forgetting to remove the settings before committ. It is open source in case you want to use it or improve it.
 
-<img height="400" src="img/envload.png"> <img height="400" src="img/system_envs.png">
+<img height="450" src="img/envload.png"> 
+
+<img height="200" src="img/system_envs.png">
+<img height="200" src="img/libs.png">
 
 The configuration is saved in a binary file 'settings.bin' encrypted with the library [protobuf-net](https://github.com/protobuf-net/protobuf-net). The interface is simple (very improvable), designed with the library [Terminal.Gui](https://github.com/migueldeicaza/gui.cs/) and the connection with the repositories is thanks to [LibGit2Sharp](https://github.com/libgit2/libgit2sharp/). 
 
