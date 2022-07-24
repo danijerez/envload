@@ -31,11 +31,16 @@ else
     FileUtils.Save(pathFileSettings, s);
 }
 
-top.Add(UI.Config(s));
+var p = new ProgressBar()
+{
+    X = 0,
+    Y = 1,
+    Width = Dim.Fill(),
+    Height = Dim.Fill(),
+    ProgressBarFormat = ProgressBarFormat.SimplePlusPercentage,
+};
+
+top.Add(UI.Config(s, p), p);
 
 Application.Run();
 Application.Shutdown();
-
-/*Environment.SetEnvironmentVariable("Test1", "Value1", EnvironmentVariableTarget.Machine);
-Environment.SetEnvironmentVariable("Test1", null, EnvironmentVariableTarget.Machine);
-Console.ReadLine();*/
