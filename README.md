@@ -1,4 +1,7 @@
-# :scroll: EnvLoad ~ <img href="https://github.com/danijerez/envload/releases/tag/alpha" src="https://img.shields.io/badge/prerelease-0.0.1-orange"> <img src="https://img.shields.io/badge/dotnet-6.0-purple"> [![Twitter Follow](https://img.shields.io/twitter/follow/d4nijerez?style=social)](https://twitter.com/d4nijerez) ![GitHub Followers](https://img.shields.io/github/followers/danijerez?style=social) 
+
+
+
+# :scroll: EnvLoad ~ [![Release](https://img.shields.io/badge/alpha-v0.0.1-orange)](https://github.com/danijerez/envload/releases/tag/alpha) [![Release](https://img.shields.io/badge/dotnet-6.0-purple)](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) [![Twitter Follow](https://img.shields.io/twitter/follow/d4nijerez?style=social)](https://twitter.com/d4nijerez) ![GitHub Followers](https://img.shields.io/github/followers/danijerez?style=social) 
 
 <b>EnvLoad</b> is a little portable program to loads environment variables into the operating system.
 Environment variables are stored in repositories (public or private) in json files classified by project and with the following structure.
