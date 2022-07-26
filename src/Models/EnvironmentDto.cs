@@ -1,6 +1,6 @@
 ﻿namespace envload.Models
 {
-    public class EnvironmentJson
+    public class EnvironmentDto
     {
         public string? project { get; set; }
         public string? environment { get; set; }

@@ -1,5 +1,7 @@
 ﻿using envload.Models;
 using LoadEnv.Models;
+using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using Terminal.Gui;
 
@@ -12,7 +14,7 @@ namespace LoadEnv.Utils
             var container = new View() { X = 0, Y = 0, Width = Dim.Fill(), Height = Dim.Fill() };
 
             //config
-            var containerConfig = new FrameView("config") { X = 0, Y = 2, Width = Dim.Fill() - 70, Height = 6 };
+            var containerConfig = new FrameView("config") { X = 0, Y = 2, Width = Dim.Sized(60), Height = 6 };
             var proyectLabel = new Label("name: ") { X = 1, Y = 0 };
             var urlLabel = new Label("repo: ") { X = 1, Y = 1 };
             var pathLabel = new Label("work: ") { X = 1, Y = 2 };
@@ -24,7 +26,7 @@ namespace LoadEnv.Utils
             containerConfig.Add(proyectLabel, urlLabel, pathLabel, branchLabel, proyectValue, urlValue, pathValue, branchValue);
 
             //git
-            var containerGit = new FrameView("git") { X = 0, Y = 7, Width = Dim.Fill() - 70, Height = 4 };
+            var containerGit = new FrameView("git") { X = 0, Y = 7, Width = Dim.Sized(60), Height = 4 };
             var loginLabel = new Label("user: ") { X = 1, Y = 0 };
             var passLabel = new Label("pass: ") { X = 1, Y = 1 };
             var loginValue = new TextField(s.Username) { X = Pos.Right(branchLabel), Y = Pos.Top(loginLabel), Width = Dim.Fill() };
@@ -34,7 +36,7 @@ namespace LoadEnv.Utils
             string pathFiles = pathValue.Text.ToString() + @"\" + proyectValue.Text.ToString();
 
             //files
-            var containerFiles = new FrameView("files") { X = 0, Y = 11, Width = Dim.Fill() - 70, Height = Dim.Fill() };
+            var containerFiles = new FrameView("files") { X = 0, Y = 11, Width = Dim.Sized(60) , Height = Dim.Fill() };
 
             //envs
             var containerEnvs = new FrameView("enviroments") { X = Pos.Right(containerConfig), Y = 2, Width = Dim.Fill(), Height = Dim.Fill() };
@@ -63,7 +65,8 @@ namespace LoadEnv.Utils
             if (Directory.Exists(pathFiles))
             {
                 string[] files = Directory.GetFiles(pathFiles);
-                listFiles.SetSource(files);
+                List<string> transform = files.ToList().Select(x => x.Replace(pathFiles, "")).ToList();
+                listFiles.SetSource(transform);
             }
 
             listFiles.SelectedItemChanged += (selected) =>
@@ -74,11 +77,11 @@ namespace LoadEnv.Utils
                 var path = selected.Value.ToString();
                 if (path != null)
                 {
-                    using (StreamReader r = new StreamReader(path))
+                    using (StreamReader r = new StreamReader(pathFiles + path))
                     {
                         try
                         {
-                            EnvironmentJson? source = JsonSerializer.Deserialize<EnvironmentJson>(r.ReadToEnd());
+                            EnvironmentDto? source = JsonSerializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
 
                             if (source != null && source.values != null)
                             {
@@ -148,10 +151,12 @@ namespace LoadEnv.Utils
             });
 
             var menu = new MenuBar(new MenuBarItem[] {
-                new MenuBarItem ("_Data", new MenuItem [] { clone }),
+                new MenuBarItem ("_Git", new MenuItem [] { clone }),
                 new MenuBarItem ("_Settings", new MenuItem [] { save, reset }),
-                new MenuBarItem ("_Enviroments", new MenuItem [] { inyect, clear })
-            });
+                new MenuBarItem ("_Enviroments", new MenuItem [] { inyect, clear }),
+                new MenuBarItem ("_Help", new MenuItem [] { new MenuItem ("_About...", "About this app", () =>  MessageBox.Query (About().Length + 2, 15, "About", About().ToString(), "_Ok"), null, null, Key.CtrlMask | Key.A)
+            })
+                 });
 
             return menu;
         }
@@ -174,7 +179,7 @@ namespace LoadEnv.Utils
                         using (StreamReader r = new StreamReader(path))
                         {
 
-                            EnvironmentJson? source = JsonSerializer.Deserialize<EnvironmentJson>(r.ReadToEnd());
+                            EnvironmentDto? source = JsonSerializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
                             if (source != null && source.values != null)
                             {
                                 for (var i = 0; i < source.values.Count(); i++)
@@ -199,7 +204,23 @@ namespace LoadEnv.Utils
             }
         }
 
-
+        private static StringBuilder About()
+        {
+            StringBuilder aboutMessage = new StringBuilder();
+            aboutMessage.AppendLine(@"");
+            aboutMessage.AppendLine(@"Load environment variables in the operating system.");
+            aboutMessage.AppendLine(@"");
+            aboutMessage.AppendLine(@"  ____|                    |                           |");
+            aboutMessage.AppendLine(@"  __|     __ \   \ \   /   |        _ \     _` |    _` |");
+            aboutMessage.AppendLine(@"  |       |   |   \ \ /    |       (   |   (   |   (   |");
+            aboutMessage.AppendLine(@" _____|  _|  _|    \_/    _____|  \___/   \__,_|  \__,_|");
+            aboutMessage.AppendLine(@"");
+            aboutMessage.AppendLine(@"");
+            aboutMessage.AppendLine(@"By danijerez (https://github.com/danijerez)");
+            aboutMessage.AppendLine($"Using Terminal.Gui Version: {FileVersionInfo.GetVersionInfo(typeof(Terminal.Gui.Application).Assembly.Location).FileVersion}");
+            aboutMessage.AppendLine(@"");
+            return aboutMessage;
+        }
 
     }
 }
