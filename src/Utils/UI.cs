@@ -36,10 +36,10 @@ namespace LoadEnv.Utils
             string pathFiles = pathValue.Text.ToString() + @"\" + proyectValue.Text.ToString();
 
             //files
-            var containerFiles = new FrameView("files") { X = 0, Y = 11, Width = Dim.Sized(60) , Height = Dim.Fill() };
+            var containerFiles = new FrameView("files") { X = 0, Y = 11, Width = Dim.Sized(60), Height = Dim.Fill() - 1 };
 
             //envs
-            var containerEnvs = new FrameView("enviroments") { X = Pos.Right(containerConfig), Y = 2, Width = Dim.Fill(), Height = Dim.Fill() };
+            var containerEnvs = new FrameView("enviroments") { X = Pos.Right(containerConfig), Y = 2, Width = Dim.Fill(), Height = Dim.Fill() - 1 };
 
             ListView listEnvs = new ListView { X = 1, Y = 0, Width = Dim.Fill(), Height = Dim.Fill() };
             var listFiles = ListFiles(listEnvs, pathFiles);
@@ -138,7 +138,7 @@ namespace LoadEnv.Utils
                 int response = MessageBox.Query(70, 8, "Info", $"Do you want to inject the listed enviroments into the system?\n" +
                 $"the process may take a few seconds.", "yes", "cancel");
                 if (response.Equals(0))
-                    Parallel.Invoke(() => InyectEnviroments(listFiles, false));
+                    Parallel.Invoke(() => InyectEnviroments(listFiles, false, s));
             });
 
             var clear = new MenuItem("_Clear", "clear current enviroments selected in system.", () =>
@@ -146,7 +146,7 @@ namespace LoadEnv.Utils
                 int response = MessageBox.Query(70, 8, "Info", $"Do you want to remove the listed enviroments into the system?\n" +
                 $"the process may take a few seconds.", "yes", "cancel");
                 if (response.Equals(0))
-                    Parallel.Invoke(() => InyectEnviroments(listFiles, true));
+                    Parallel.Invoke(() => InyectEnviroments(listFiles, true, s));
 
             });
 
@@ -158,11 +158,15 @@ namespace LoadEnv.Utils
             })
                  });
 
+
+
             return menu;
         }
 
-        private static void InyectEnviroments(ListView listFiles, bool clear)
+        private static void InyectEnviroments(ListView listFiles, bool clear, Settings s)
         {
+            string pathFiles = s.Workspace + @"\" + s.Proyect;
+
             if (listFiles.Source == null)
                 return;
 
@@ -176,7 +180,7 @@ namespace LoadEnv.Utils
                 {
                     try
                     {
-                        using (StreamReader r = new StreamReader(path))
+                        using (StreamReader r = new StreamReader(pathFiles + path))
                         {
 
                             EnvironmentDto? source = JsonSerializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
@@ -188,8 +192,8 @@ namespace LoadEnv.Utils
                                     if (name != null)
                                         Environment.SetEnvironmentVariable(name, !clear ? source.values[i].value : null, EnvironmentVariableTarget.Machine);
                                 }
-                                int result = MessageBox.Query(100, source.values.Count() + 6, "Info", $"Environment variables {text} in system:\n" +
-                                    $"{string.Concat(source.values.Select((a) => string.Format("\n[{0}]:[{1}]", a.name, a.value)))}", "ok");
+                                int result = MessageBox.Query(200, source.values.Count() + 6, "Info", $"Environment variables {text} in system:\n" +
+                                    $"{string.Concat(source.values.Select((a) => string.Format("\n{0}: {1}", a.name, a.value)))}", "ok");
 
                             }
                         }

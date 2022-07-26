@@ -30,7 +30,8 @@ Settings s = new Settings
 };
 
 if (File.Exists(pathFileSettings))
-    using (var file = File.OpenRead(pathFileSettings)) { 
+    using (var file = File.OpenRead(pathFileSettings))
+    {
         s = Serializer.Deserialize<Settings>(file);
         s.PathSettings = pathSettings;
         s.Workspace = workspace;
@@ -41,7 +42,7 @@ else
     FileUtils.Save(pathFileSettings, s);
 }
 
-top.ColorScheme = Colors.ColorSchemes[colorScheme];
+top.ColorScheme = Colors.ColorSchemes[s.ColorScheme];
 var loop = Application.MainLoop;
 
 var pb = new ProgressBar()
@@ -60,7 +61,26 @@ bool timer(MainLoop caller)
     return true;
 }
 
-top.Add(UI.Config(s), pb);
+var statusBar = new StatusBar(new StatusItem[] {
+                new StatusItem(Key.Null, "EnvLoad v0.0.2", null),
+            new StatusItem(Key.F1, "~F1~ Color", () =>{
+                if(s.ColorScheme == null)
+                    return;
+                if (s.ColorScheme.Equals("Base"))
+                    s.ColorScheme = "Error";
+                else if (s.ColorScheme.Equals("Error"))
+                    s.ColorScheme = "Dialog";
+                else if (s.ColorScheme.Equals("Dialog"))
+                    s.ColorScheme = "Menu";
+                else
+                    s.ColorScheme = "Base";
+                top.ColorScheme = Colors.ColorSchemes[s.ColorScheme];
+            } )
+
+        });
+
+
+top.Add(UI.Config(s), pb, statusBar);
 
 Application.Run();
 Application.Shutdown();
