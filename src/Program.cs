@@ -1,6 +1,7 @@
 ﻿using LoadEnv.Models;
 using LoadEnv.Utils;
 using ProtoBuf;
+using Serilog;
 using Terminal.Gui;
 
 Application.Init();
@@ -15,6 +16,11 @@ var defaultBranch = "envs";
 var defaultProyect = "envload";
 var exampleRepoUrl = @"https://github.com/danijerez/envload";
 var pathFileSettings = pathSettings + @"\" + nameSettings;
+
+Log.Logger = new LoggerConfiguration()
+         .MinimumLevel.Information()
+         .WriteTo.File(directory + @"\log\envload_.txt", rollingInterval: RollingInterval.Day)
+         .CreateLogger();
 
 Settings s = new Settings
 {

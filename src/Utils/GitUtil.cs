@@ -1,4 +1,6 @@
-﻿using LibGit2Sharp;
+﻿
+using LibGit2Sharp;
+using Serilog;
 using Terminal.Gui;
 
 namespace LoadEnv.Utils
@@ -57,11 +59,14 @@ namespace LoadEnv.Utils
                     listFiles.SetSource(files);
                 }
 
-                MessageBox.Query(70, 8, "Info", $"Repository in branch '{branch}' cloned in '{result}'", "ok");
+                var message = $"Repository in branch '{branch}' cloned in '{result}'";
+                Log.Information(message);
+                MessageBox.Query(70, 8, "Info", message, "ok");
 
             }
             catch (Exception e)
             {
+                Log.Debug(e.Message);
                 MessageBox.ErrorQuery(70, 8, "Error", e.Message, "ok");
             }
 

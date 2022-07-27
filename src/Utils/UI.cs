@@ -1,6 +1,6 @@
 ﻿using envload.Models;
 using LoadEnv.Models;
-using System.Diagnostics;
+using Serilog;
 using System.Text;
 using System.Text.Json;
 using Terminal.Gui;
@@ -95,6 +95,7 @@ namespace LoadEnv.Utils
                         }
                         catch (Exception e)
                         {
+                            Log.Debug(e.Message);
                             MessageBox.ErrorQuery(70, 8, "Error", e.Message, "ok");
                         }
                     }
@@ -135,26 +136,39 @@ namespace LoadEnv.Utils
 
             var inyect = new MenuItem("_Inyect", "inyect current enviroments selected in system.", () =>
             {
-                int response = MessageBox.Query(70, 8, "Info", $"Do you want to inject the listed enviroments into the system?\n" +
-                $"the process may take a few seconds.", "yes", "cancel");
-                if (response.Equals(0))
-                    Parallel.Invoke(() => InyectEnviroments(listFiles, false, s));
+                if (listFiles.Source == null)
+                    MessageBox.Query(70, 8, "Info", $"Before loading variables you need to select a directory", "ok");
+                else
+                {
+                    int response = MessageBox.Query(70, 8, "Info", $"Do you want to inject the listed enviroments into the system?\n" +
+                                    $"the process may take a few seconds.", "yes", "cancel");
+                    if (response.Equals(0))
+                        Parallel.Invoke(() => InyectEnviroments(listFiles, false, s));
+                }
+                
             });
 
             var clear = new MenuItem("_Clear", "clear current enviroments selected in system.", () =>
             {
-                int response = MessageBox.Query(70, 8, "Info", $"Do you want to remove the listed enviroments into the system?\n" +
-                $"the process may take a few seconds.", "yes", "cancel");
-                if (response.Equals(0))
-                    Parallel.Invoke(() => InyectEnviroments(listFiles, true, s));
+                if (listFiles.Source == null)
+                    MessageBox.Query(70, 8, "Info", $"There is nothing selected to clear", "ok");
+                else
+                {
+                    int response = MessageBox.Query(70, 8, "Info", $"Do you want to remove the listed enviroments into the system?\n" +
+                                    $"the process may take a few seconds.", "yes", "cancel");
+                    if (response.Equals(0))
+                        Parallel.Invoke(() => InyectEnviroments(listFiles, true, s));
+                }
 
             });
+
+            var about = About();
 
             var menu = new MenuBar(new MenuBarItem[] {
                 new MenuBarItem ("_Git", new MenuItem [] { clone }),
                 new MenuBarItem ("_Settings", new MenuItem [] { save, reset }),
                 new MenuBarItem ("_Enviroments", new MenuItem [] { inyect, clear }),
-                new MenuBarItem ("_Help", new MenuItem [] { new MenuItem ("_About...", "About this app", () =>  MessageBox.Query (About().Length + 2, 15, "About", About().ToString(), "_Ok"), null, null, Key.CtrlMask | Key.A)
+                new MenuBarItem ("_Help", new MenuItem [] { new MenuItem ("_About...", "About this app", () =>  MessageBox.Query (about.Length + 2, 15, "About", about.ToString(), "_Ok"), null, null, Key.CtrlMask | Key.A)
             })
                  });
 
@@ -165,10 +179,7 @@ namespace LoadEnv.Utils
 
         private static void InyectEnviroments(ListView listFiles, bool clear, Settings s)
         {
-            string pathFiles = s.Workspace + @"\" + s.Proyect;
-
-            if (listFiles.Source == null)
-                return;
+            string pathFiles = s.Workspace + @"\" + s.Proyect; 
 
             var text = !clear ? "injected" : "deleted";
             var list = listFiles.Source.ToList();
@@ -210,9 +221,8 @@ namespace LoadEnv.Utils
 
         private static StringBuilder About()
         {
+
             StringBuilder aboutMessage = new StringBuilder();
-            aboutMessage.AppendLine(@"");
-            aboutMessage.AppendLine(@"Load environment variables in the operating system.");
             aboutMessage.AppendLine(@"");
             aboutMessage.AppendLine(@"  ____|                    |                           |");
             aboutMessage.AppendLine(@"  __|     __ \   \ \   /   |        _ \     _` |    _` |");
@@ -220,8 +230,8 @@ namespace LoadEnv.Utils
             aboutMessage.AppendLine(@" _____|  _|  _|    \_/    _____|  \___/   \__,_|  \__,_|");
             aboutMessage.AppendLine(@"");
             aboutMessage.AppendLine(@"");
+            aboutMessage.AppendLine(@"Load environment variables in the operating system.");
             aboutMessage.AppendLine(@"By danijerez (https://github.com/danijerez)");
-            aboutMessage.AppendLine($"Using Terminal.Gui Version: {FileVersionInfo.GetVersionInfo(typeof(Terminal.Gui.Application).Assembly.Location).FileVersion}");
             aboutMessage.AppendLine(@"");
             return aboutMessage;
         }
