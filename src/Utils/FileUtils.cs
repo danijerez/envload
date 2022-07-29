@@ -28,22 +28,24 @@ namespace LoadEnv.Utils
                 {
                     try
                     {
-                        using (StreamReader r = new StreamReader(pathFiles + @"\" + path))
+                        using StreamReader r = new(pathFiles + @"\" + path);
+
+                        EnvironmentDto? source = JsonSerializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
+                        if (source != null && source.values != null)
                         {
 
-                            EnvironmentDto? source = JsonSerializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
-                            if (source != null && source.values != null)
+                            source.values
+                            .DistinctBy(x => x.name)
+                            .ToList()
+                            .ForEach(x =>
                             {
-                                for (var i = 0; i < source.values.Count(); i++)
-                                {
-                                    var name = source.values[i].name;
-                                    if (name != null)
-                                        Environment.SetEnvironmentVariable(name, !clear ? source.values[i].value : null, EnvironmentVariableTarget.Machine);
-                                }
-                                int result = MessageBox.Query(200, source.values.Count() + 6, "Info", $"Environment variables {text} in system:\n" +
-                                    $"{string.Concat(source.values.Select((a) => string.Format("\n{0}: {1}", a.name, a.value)))}", "ok");
+                                if (x.name != null)
+                                    Environment.SetEnvironmentVariable(x.name, !clear ? x.value : null, EnvironmentVariableTarget.Machine);
+                            });
 
-                            }
+                            int result = MessageBox.Query(200, source.values.DistinctBy(x => x.name).Count() + 6, "Info", $"Environment variables {text} in system:\n" +
+                                $"{string.Concat(source.values.DistinctBy(x => x.name).Select((a) => string.Format("\n{0}: {1}", a.name, a.value)))}", "ok");
+
                         }
 
                     }

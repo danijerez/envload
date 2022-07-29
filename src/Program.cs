@@ -18,11 +18,11 @@ var exampleRepoUrl = @"https://github.com/danijerez/envload";
 var pathFileSettings = pathSettings + @"\" + nameSettings;
 
 Log.Logger = new LoggerConfiguration()
-         .MinimumLevel.Information()
-         .WriteTo.File(directory + @"\log\envload_.txt", rollingInterval: RollingInterval.Day)
+         .MinimumLevel.Debug()
+         .WriteTo.File(directory + @"\log\envload_.txt")
          .CreateLogger();
 
-Settings s = new Settings
+Settings s = new()
 {
     Url = exampleRepoUrl,
     Password = string.Empty,

@@ -1,6 +1,7 @@
 ﻿using envload.Models;
 using LoadEnv.Models;
 using Serilog;
+using System.Data;
 using System.Text;
 using System.Text.Json;
 using Terminal.Gui;
@@ -41,19 +42,21 @@ namespace LoadEnv.Utils
             //envs
             var containerEnvs = new FrameView("enviroments") { X = Pos.Right(containerConfig), Y = 2, Width = Dim.Fill(), Height = Dim.Fill() - 1 };
 
-            ListView listEnvs = new ListView { X = 1, Y = 0, Width = Dim.Fill(), Height = Dim.Fill() };
-            var listFiles = ListFiles(listEnvs, pathFiles);
+            TableView tableEnvs = new() { X = 1, Y = 0, Width = Dim.Fill(), Height = Dim.Fill() };
+            var listFiles = ListFiles(tableEnvs, pathFiles);
+
+
             containerFiles.Add(listFiles);
-            containerEnvs.Add(listEnvs);
+            containerEnvs.Add(tableEnvs);
 
             container.Add(containerConfig, containerGit, containerFiles, containerEnvs, MenuTop(loginValue, passValue, pathValue, urlValue, proyectValue, branchValue, listFiles, s));
 
             return container;
         }
 
-        public static ListView ListFiles(ListView listEnvs, string pathFiles)
+        public static ListView ListFiles(TableView tableEnvs, string pathFiles)
         {
-            ListView listFiles = new ListView()
+            ListView listFiles = new()
             {
                 X = 1,
                 Y = 0,
@@ -77,27 +80,41 @@ namespace LoadEnv.Utils
                 var path = selected.Value.ToString();
                 if (path != null)
                 {
-                    using (StreamReader r = new StreamReader(pathFiles + @"\" + path))
+                    using StreamReader r = new(pathFiles + @"\" + path);
+                    try
                     {
-                        try
-                        {
-                            EnvironmentDto? source = JsonSerializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
+                        EnvironmentDto? source = JsonSerializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
 
-                            if (source != null && source.values != null)
-                            {
-                                List<string> values = new List<string>();
-                                for (int i = 0; i < source.values.Count(); i++)
-                                {
-                                    values.Add(string.Format("{0}: {1}", source.values[i].name, source.values[i].value));
-                                }
-                                listEnvs.SetSource(values);
-                            }
-                        }
-                        catch (Exception e)
+                        if (source != null && source.values != null)
                         {
-                            Log.Debug(e.Message);
-                            MessageBox.ErrorQuery(70, 8, "Error", e.Message, "ok");
+                            List<string> values = new();
+
+
+                            var dt = new DataTable();
+                            dt.Columns.Add("Name");
+                            dt.Columns.Add("Value");
+
+                            source.values
+                            .DistinctBy(x => x.name)
+                            .ToList()
+                            .ForEach(x =>
+                            {
+                                var newRow = dt.NewRow();
+                                newRow[0] = x.name;
+                                newRow[1] = x.value;
+                                dt.Rows.Add(newRow);
+                            });
+
+                            tableEnvs.Table = dt;
+                            tableEnvs.EnsureValidScrollOffsets();
+                            tableEnvs.Redraw(tableEnvs.Bounds);
+
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Debug(e.Message);
+                        MessageBox.ErrorQuery(70, 8, "Error", e.Message, "ok");
                     }
                 }
             };
@@ -180,7 +197,7 @@ namespace LoadEnv.Utils
         private static StringBuilder About()
         {
 
-            StringBuilder aboutMessage = new StringBuilder();
+            StringBuilder aboutMessage = new();
             aboutMessage.AppendLine(@"");
             aboutMessage.AppendLine(@"  ____|                    |                           |");
             aboutMessage.AppendLine(@"  __|     __ \   \ \   /   |        _ \     _` |    _` |");

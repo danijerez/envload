@@ -34,7 +34,7 @@ namespace LoadEnv.Utils
             string? proyect = proyectField.Text.ToString();
             string directory = path + @"\" + proyect;
             int response = MessageBox.Query(70, 8, "Info", $"Do you want to clone the repository?\n" +
-                $"the process may take a few seconds and overwrites the directory: {directory}", "yes", "cancel");
+                $"the process may take a few seconds and overwrites the directory: \n {directory}", "yes", "cancel");
 
             if (response.Equals(1))
                 return;
@@ -60,7 +60,7 @@ namespace LoadEnv.Utils
                     listFiles.SetSource(transform);
                 }
 
-                var message = $"Repository in branch '{branch}' cloned in '{result}'";
+                var message = $"Repository in branch '{branch}' cloned in: \n'{result}'";
                 Log.Information(message);
                 MessageBox.Query(70, 8, "Info", message, "ok");
 
