@@ -88,5 +88,12 @@ var statusBar = new StatusBar(new StatusItem[] {
 
 top.Add(UI.Config(s), pb, statusBar);
 
-Application.Run();
-Application.Shutdown();
+try
+{
+    Application.Run();
+    Application.Shutdown();
+}
+catch (Exception e)
+{
+    Log.Error(e.Message, e);
+}

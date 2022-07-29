@@ -56,7 +56,8 @@ namespace LoadEnv.Utils
                 if (Directory.Exists(pathField.Text.ToString() + @"\" + proyectField.Text.ToString()))
                 {
                     string[] files = Directory.GetFiles(pathField.Text.ToString() + @"\" + proyectField.Text.ToString());
-                    listFiles.SetSource(files);
+                    List<string> transform = files.ToList().Select(x => Path.GetFileName(x)).ToList();
+                    listFiles.SetSource(transform);
                 }
 
                 var message = $"Repository in branch '{branch}' cloned in '{result}'";
