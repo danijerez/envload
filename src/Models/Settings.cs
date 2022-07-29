@@ -21,5 +21,9 @@ namespace LoadEnv.Models
         public string? PathSettings { get; set; }
         [ProtoMember(8)]
         public string? NameSettings { get; set; }
+        [ProtoMember(9)]
+        public string? Locale { get; set; }
+        [ProtoMember(10)]
+        public string? ColorScheme { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using LibGit2Sharp;
+﻿
+using LibGit2Sharp;
+using Serilog;
 using Terminal.Gui;
 
 namespace LoadEnv.Utils
@@ -32,7 +34,7 @@ namespace LoadEnv.Utils
             string? proyect = proyectField.Text.ToString();
             string directory = path + @"\" + proyect;
             int response = MessageBox.Query(70, 8, "Info", $"Do you want to clone the repository?\n" +
-                $"the process may take a few seconds and overwrites the directory: {directory}", "yes", "cancel");
+                $"the process may take a few seconds and overwrites the directory: \n {directory}", "yes", "cancel");
 
             if (response.Equals(1))
                 return;
@@ -54,14 +56,18 @@ namespace LoadEnv.Utils
                 if (Directory.Exists(pathField.Text.ToString() + @"\" + proyectField.Text.ToString()))
                 {
                     string[] files = Directory.GetFiles(pathField.Text.ToString() + @"\" + proyectField.Text.ToString());
-                    listFiles.SetSource(files);
+                    List<string> transform = files.ToList().Select(x => Path.GetFileName(x)).ToList();
+                    listFiles.SetSource(transform);
                 }
 
-                MessageBox.Query(70, 8, "Info", $"Repository in branch '{branch}' cloned in '{result}'", "ok");
+                var message = $"Repository in branch '{branch}' cloned in: \n'{result}'";
+                Log.Information(message);
+                MessageBox.Query(70, 8, "Info", message, "ok");
 
             }
             catch (Exception e)
             {
+                Log.Debug(e.Message);
                 MessageBox.ErrorQuery(70, 8, "Error", e.Message, "ok");
             }
 
