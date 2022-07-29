@@ -46,7 +46,7 @@ Environment variables are stored in repositories (public or private) in json fil
 | Name        | Descripción | Version     |
 | ----------- | ----------- | ----------- |
 | [protobuf-net](https://github.com/protobuf-net/protobuf-net)      | Protocol Buffers library for idiomatic .NET                        |3.1.17|
-| [Terminal.Gui](https://github.com/migueldeicaza/gui.cs/)          | Console-based user interface toolkit for .NET applications.        |1.6.4|
+| [Terminal.Gui](https://github.com/migueldeicaza/gui.cs/)          | Console-based user interface toolkit for .NET applications.        |1.7.0|
 | [LibGit2Sharp](https://github.com/libgit2/libgit2sharp/)          | Git + .NET/Mono = ❤        |0.26.2|
 
 ### If you use it or have any suggestions comment! ✌️
