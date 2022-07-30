@@ -23,6 +23,7 @@ public class Program
         {
             Stream stream = new FileInfo(FileUtils.directory + @"data\i18n.json").OpenRead();
             ILocalizationSource source = new JsonLocalizationSource(stream, PropertyCaseSensitivity.CaseInsensitive);
+            
             ILocalizer rb = new Localizer(source, s.Locale);
 
             UI.Init(top, s, rb);

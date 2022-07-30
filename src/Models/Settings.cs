@@ -25,5 +25,7 @@ namespace LoadEnv.Models
         public string? Locale { get; set; }
         [ProtoMember(10)]
         public string? ColorScheme { get; set; }
+        [ProtoMember(11)]
+        public string? Version { get; set; }
     }
 }

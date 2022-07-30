@@ -18,6 +18,9 @@ namespace LoadEnv.Utils
         private static string defaultProyect = "envload";
         private static string exampleRepoUrl = @"https://github.com/danijerez/envload";
         private static string pathFileSettings = pathSettings + @"\" + nameSettings;
+        private static string defaultLocale = "en_US";
+        public static string version = "0.0.4";
+
 
         public static void Save(string? path, object obj)
         {
@@ -82,7 +85,8 @@ namespace LoadEnv.Utils
                 PathSettings = pathSettings,
                 NameSettings = nameSettings,
                 ColorScheme = colorScheme,
-                Locale = "en_US"
+                Locale = defaultLocale,
+                Version = version
             };
 
             if (File.Exists(pathFileSettings))

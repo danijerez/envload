@@ -23,9 +23,9 @@ namespace LoadEnv.Utils
 
             //config
             var containerConfig = new FrameView(rb.Get("config")) { X = 0, Y = 2, Width = Dim.Sized(60), Height = 6 };
-            var proyectLabel = new Label("name: ") { X = 1, Y = 0 };
+            var proyectLabel = new Label(rb.Get("name")) { X = 1, Y = 0 };
             var urlLabel = new Label(rb.Get("repo")) { X = 1, Y = 1 };
-            var pathLabel = new Label(rb.Get("work:")) { X = 1, Y = 2 };
+            var pathLabel = new Label(rb.Get("work")) { X = 1, Y = 2 };
             var branchLabel = new Label(rb.Get("branch")) { X = 1, Y = 3 };
             var proyectValue = new TextField(s.Proyect) { X = Pos.Right(branchLabel), Y = Pos.Top(proyectLabel), Width = Dim.Fill() };
             var urlValue = new TextField(s.Url) { X = Pos.Right(branchLabel), Y = Pos.Top(urlLabel), Width = Dim.Fill() };
@@ -100,8 +100,8 @@ namespace LoadEnv.Utils
 
 
                             var dt = new DataTable();
-                            dt.Columns.Add("Name");
-                            dt.Columns.Add("Value");
+                            dt.Columns.Add(rb.Get("name"));
+                            dt.Columns.Add(rb.Get("value"));
 
                             source.values
                             .DistinctBy(x => x.name)
@@ -190,15 +190,17 @@ namespace LoadEnv.Utils
 
             var about = About(rb);
 
+
+
             var menu = new MenuBar(new MenuBarItem[] {
                 new MenuBarItem (rb.Get("menu.git.title"), new MenuItem [] { clone }),
-                new MenuBarItem (rb.Get("menu.settings.title"), new MenuItem [] { save, reset }),
+                new MenuBarItem (rb.Get("menu.settings.title"), new MenuItem [] { save, reset, new MenuBarItem (rb.Get("menu.settings.options.languages"), MenuLanguages(s, rb)) }),
                 new MenuBarItem (rb.Get("menu.enviroments.title"), new MenuItem [] { inyect, clear }),
                 new MenuBarItem (rb.Get("menu.help.title"), new MenuItem [] {
                     new MenuItem (rb.Get("menu.help.options.about"), rb.Get("menu.help.info.about"),
-                    () =>  MessageBox.Query (about.Length + 2, 15, "About", about.ToString(), rb.Get("ok")), null, null, Key.CtrlMask | Key.A)
+                    () =>  MessageBox.Query (about.Length + 2, 15, rb.Get("about"), about.ToString(), rb.Get("ok")), null, null, Key.CtrlMask | Key.A)
             })
-                 });
+                 }); ;
 
 
 
@@ -210,15 +212,17 @@ namespace LoadEnv.Utils
 
             StringBuilder aboutMessage = new();
             aboutMessage.AppendLine(@"");
+            aboutMessage.AppendLine(rb.Get("msg.des"));
+            aboutMessage.AppendLine(@"By danijerez (https://github.com/danijerez)");
+            aboutMessage.AppendLine(@"");
+            aboutMessage.AppendLine(@"");
             aboutMessage.AppendLine(@"  ____|                    |                           |");
             aboutMessage.AppendLine(@"  __|     __ \   \ \   /   |        _ \     _` |    _` |");
             aboutMessage.AppendLine(@"  |       |   |   \ \ /    |       (   |   (   |   (   |");
             aboutMessage.AppendLine(@" _____|  _|  _|    \_/    _____|  \___/   \__,_|  \__,_|");
-            aboutMessage.AppendLine(@"");
-            aboutMessage.AppendLine(@"");
-            aboutMessage.AppendLine(rb.Get("msg.des"));
-            aboutMessage.AppendLine(@"By danijerez (https://github.com/danijerez)");
-            aboutMessage.AppendLine(@"");
+            aboutMessage.AppendLine($"");
+            aboutMessage.AppendLine($"~ v{FileUtils.version} ~");
+
             return aboutMessage;
         }
 
@@ -248,7 +252,7 @@ namespace LoadEnv.Utils
         private static StatusBar CreateStatusBar(Settings s, ILocalizer rb)
         {
             return new StatusBar(new StatusItem[] {
-                new StatusItem(Key.Null, "EnvLoad v0.0.3", null),
+                new StatusItem(Key.Null, "EnvLoad v" + FileUtils.version, null),
                 new StatusItem(Key.Null, s.Locale, null),
                 new StatusItem(Key.F1, "~F1~ " + rb.Get("color"), () => {
                     if (s.ColorScheme == null)
@@ -266,6 +270,27 @@ namespace LoadEnv.Utils
             });
         }
 
+        private static MenuItem[] MenuLanguages(Settings s, ILocalizer rb)
+        {
 
+            return new MenuItem[] {
+                new MenuItem(rb.Get("languages.en_US"), null, () => { ChangeLanguage(s, rb, "en_US"); }) {},
+                new MenuItem(rb.Get("languages.zh_CN"), null, () => { ChangeLanguage(s, rb, "zh_CN"); }){}
+            };
+        }
+
+        private static void ChangeLanguage(Settings s, ILocalizer rb, string locale)
+        {
+            var pathFileSettings = s.PathSettings + @"\" + s.NameSettings;
+            s.Locale = locale;
+            FileUtils.Save(pathFileSettings, s);
+            int response = MessageBox.Query(70, 8, rb.Get("languages." + locale), "\n" + rb.Get("msg.reset"), rb.Get("reset"), rb.Get("cancel"));
+            if (response.Equals(0))
+            {
+                System.Diagnostics.Process.Start(FileUtils.directory + "envload");
+                Environment.Exit(0);
+            }
+            
+        }
     }
 }
