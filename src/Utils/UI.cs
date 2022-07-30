@@ -1,4 +1,5 @@
 ﻿using envload.Models;
+using libc.translation;
 using LoadEnv.Models;
 using Serilog;
 using System.Data;
@@ -10,26 +11,33 @@ namespace LoadEnv.Utils
 {
     public static class UI
     {
-        public static View Config(Settings s)
+
+        public static void Init(Toplevel top, Settings s, ILocalizer rb)
+        {
+            top.Add(Containers(s, rb), CreateProgressBar(), CreateStatusBar(s, rb));
+        }
+
+        private static View Containers(Settings s, ILocalizer rb)
         {
             var container = new View() { X = 0, Y = 0, Width = Dim.Fill(), Height = Dim.Fill() };
 
             //config
-            var containerConfig = new FrameView("config") { X = 0, Y = 2, Width = Dim.Sized(60), Height = 6 };
+            var containerConfig = new FrameView(rb.Get("config")) { X = 0, Y = 2, Width = Dim.Sized(60), Height = 6 };
             var proyectLabel = new Label("name: ") { X = 1, Y = 0 };
-            var urlLabel = new Label("repo: ") { X = 1, Y = 1 };
-            var pathLabel = new Label("work: ") { X = 1, Y = 2 };
-            var branchLabel = new Label("branch: ") { X = 1, Y = 3 };
+            var urlLabel = new Label(rb.Get("repo")) { X = 1, Y = 1 };
+            var pathLabel = new Label(rb.Get("work:")) { X = 1, Y = 2 };
+            var branchLabel = new Label(rb.Get("branch")) { X = 1, Y = 3 };
             var proyectValue = new TextField(s.Proyect) { X = Pos.Right(branchLabel), Y = Pos.Top(proyectLabel), Width = Dim.Fill() };
             var urlValue = new TextField(s.Url) { X = Pos.Right(branchLabel), Y = Pos.Top(urlLabel), Width = Dim.Fill() };
             var pathValue = new TextField(s.Workspace) { X = Pos.Right(branchLabel), Y = Pos.Top(pathLabel), Width = Dim.Fill() };
             var branchValue = new TextField(s.Branch) { X = Pos.Right(branchLabel), Y = Pos.Top(branchLabel), Width = Dim.Fill() };
+
             containerConfig.Add(proyectLabel, urlLabel, pathLabel, branchLabel, proyectValue, urlValue, pathValue, branchValue);
 
             //git
-            var containerGit = new FrameView("git") { X = 0, Y = 7, Width = Dim.Sized(60), Height = 4 };
-            var loginLabel = new Label("user: ") { X = 1, Y = 0 };
-            var passLabel = new Label("pass: ") { X = 1, Y = 1 };
+            var containerGit = new FrameView(rb.Get("git")) { X = 0, Y = 7, Width = Dim.Sized(60), Height = 4 };
+            var loginLabel = new Label(rb.Get("user")) { X = 1, Y = 0 };
+            var passLabel = new Label(rb.Get("pass")) { X = 1, Y = 1 };
             var loginValue = new TextField(s.Username) { X = Pos.Right(branchLabel), Y = Pos.Top(loginLabel), Width = Dim.Fill() };
             var passValue = new TextField(s.Password) { Secret = true, X = Pos.Right(branchLabel), Y = Pos.Top(passLabel), Width = Dim.Fill() };
             containerGit.Add(loginLabel, passLabel, loginValue, passValue);
@@ -37,24 +45,25 @@ namespace LoadEnv.Utils
             string pathFiles = pathValue.Text.ToString() + @"\" + proyectValue.Text.ToString();
 
             //files
-            var containerFiles = new FrameView("files") { X = 0, Y = 11, Width = Dim.Sized(60), Height = Dim.Fill() - 1 };
+            var containerFiles = new FrameView(rb.Get("files")) { X = 0, Y = 11, Width = Dim.Sized(60), Height = Dim.Fill() - 1 };
 
             //envs
-            var containerEnvs = new FrameView("enviroments") { X = Pos.Right(containerConfig), Y = 2, Width = Dim.Fill(), Height = Dim.Fill() - 1 };
+            var containerEnvs = new FrameView(rb.Get("envs")) { X = Pos.Right(containerConfig), Y = 2, Width = Dim.Fill(), Height = Dim.Fill() - 1 };
 
             TableView tableEnvs = new() { X = 1, Y = 0, Width = Dim.Fill(), Height = Dim.Fill() };
-            var listFiles = ListFiles(tableEnvs, pathFiles);
+            var listFiles = ListFiles(tableEnvs, pathFiles, rb);
 
 
             containerFiles.Add(listFiles);
             containerEnvs.Add(tableEnvs);
 
-            container.Add(containerConfig, containerGit, containerFiles, containerEnvs, MenuTop(loginValue, passValue, pathValue, urlValue, proyectValue, branchValue, listFiles, s));
+            container.Add(containerConfig, containerGit, containerFiles, containerEnvs,
+                MenuTop(loginValue, passValue, pathValue, urlValue, proyectValue, branchValue, listFiles, s, rb));
 
             return container;
         }
 
-        public static ListView ListFiles(TableView tableEnvs, string pathFiles)
+        private static ListView ListFiles(TableView tableEnvs, string pathFiles, ILocalizer rb)
         {
             ListView listFiles = new()
             {
@@ -114,7 +123,7 @@ namespace LoadEnv.Utils
                     catch (Exception e)
                     {
                         Log.Debug(e.Message);
-                        MessageBox.ErrorQuery(70, 8, "Error", e.Message, "ok");
+                        MessageBox.ErrorQuery(70, 8, rb.Get("alerts.error"), e.Message, rb.Get("ok"));
                     }
                 }
             };
@@ -122,11 +131,11 @@ namespace LoadEnv.Utils
             return listFiles;
         }
 
-        public static MenuBar MenuTop(TextField username, TextField password, TextField path, TextField url, TextField proyect, TextField branch, ListView listFiles, Settings s)
+        private static MenuBar MenuTop(TextField username, TextField password, TextField path, TextField url, TextField proyect, TextField branch, ListView listFiles, Settings s, ILocalizer rb)
         {
             var pathFileSettings = s.PathSettings + @"\" + s.NameSettings;
-            var clone = new MenuItem("_Clone", "clone the configured repository.", () => { GitUtil.Clone(username, password, path, url, proyect, branch, listFiles); });
-            var save = new MenuItem("_Save", "save changes in settings file.", () =>
+            var clone = new MenuItem(rb.Get("menu.git.options.clone"), rb.Get("menu.git.info.clone"), () => { GitUtil.Clone(username, password, path, url, proyect, branch, listFiles, rb); });
+            var save = new MenuItem(rb.Get("menu.settings.options.save"), rb.Get("menu.settings.info.save"), () =>
             {
 
                 s.Branch = branch.Text.ToString();
@@ -139,7 +148,7 @@ namespace LoadEnv.Utils
 
             });
 
-            var reset = new MenuItem("_Reset", "reset settings fields.", () =>
+            var reset = new MenuItem(rb.Get("menu.settings.options.reset"), rb.Get("menu.settings.info.reset"), () =>
             {
                 branch.Text = "";
                 proyect.Text = "";
@@ -151,41 +160,43 @@ namespace LoadEnv.Utils
 
             });
 
-            var inyect = new MenuItem("_Inyect", "inyect current enviroments selected in system.", () =>
+            var inyect = new MenuItem(rb.Get("menu.enviroments.options.inyect"), rb.Get("menu.enviroments.info.inyect"), () =>
             {
                 if (listFiles.Source == null)
-                    MessageBox.Query(70, 8, "Info", $"Before loading variables you need to select a directory", "ok");
+                    MessageBox.Query(70, 8, rb.Get("alerts.info"), rb.Get("msg.no.path"), rb.Get("ok"));
                 else
                 {
-                    int response = MessageBox.Query(70, 8, "Info", $"Do you want to inject the listed enviroments into the system?\n" +
-                                    $"the process may take a few seconds.", "yes", "cancel");
+                    int response = MessageBox.Query(70, 8, rb.Get("alerts.info"), string.Format("{0}\n{1}", rb.Get("msg.inyect"), rb.Get("alerts.fewsec")),
+                        rb.Get("yes"), rb.Get("cancel"));
                     if (response.Equals(0))
-                        Parallel.Invoke(() => FileUtils.InyectEnviroments(listFiles, false, s));
+                        Parallel.Invoke(() => FileUtils.InyectEnviroments(listFiles, false, s, rb));
                 }
 
             });
 
-            var clear = new MenuItem("_Clear", "clear current enviroments selected in system.", () =>
+            var clear = new MenuItem(rb.Get("menu.enviroments.options.clear"), rb.Get("menu.enviroments.info.clear"), () =>
             {
                 if (listFiles.Source == null)
-                    MessageBox.Query(70, 8, "Info", $"There is nothing selected to clear", "ok");
+                    MessageBox.Query(70, 8, rb.Get("alerts.info"), rb.Get("msg.no.path"), rb.Get("ok"));
                 else
                 {
-                    int response = MessageBox.Query(70, 8, "Info", $"Do you want to remove the listed enviroments into the system?\n" +
-                                    $"the process may take a few seconds.", "yes", "cancel");
+                    int response = MessageBox.Query(70, 8, rb.Get("alerts.info"), string.Format("{0}\n{1}", rb.Get("msg.remove"), rb.Get("alerts.fewsec")),
+                        rb.Get("yes"), rb.Get("cancel"));
                     if (response.Equals(0))
-                        Parallel.Invoke(() => FileUtils.InyectEnviroments(listFiles, true, s));
+                        Parallel.Invoke(() => FileUtils.InyectEnviroments(listFiles, true, s, rb));
                 }
 
             });
 
-            var about = About();
+            var about = About(rb);
 
             var menu = new MenuBar(new MenuBarItem[] {
-                new MenuBarItem ("_Git", new MenuItem [] { clone }),
-                new MenuBarItem ("_Settings", new MenuItem [] { save, reset }),
-                new MenuBarItem ("_Enviroments", new MenuItem [] { inyect, clear }),
-                new MenuBarItem ("_Help", new MenuItem [] { new MenuItem ("_About...", "About this app", () =>  MessageBox.Query (about.Length + 2, 15, "About", about.ToString(), "_Ok"), null, null, Key.CtrlMask | Key.A)
+                new MenuBarItem (rb.Get("menu.git.title"), new MenuItem [] { clone }),
+                new MenuBarItem (rb.Get("menu.settings.title"), new MenuItem [] { save, reset }),
+                new MenuBarItem (rb.Get("menu.enviroments.title"), new MenuItem [] { inyect, clear }),
+                new MenuBarItem (rb.Get("menu.help.title"), new MenuItem [] {
+                    new MenuItem (rb.Get("menu.help.options.about"), rb.Get("menu.help.info.about"),
+                    () =>  MessageBox.Query (about.Length + 2, 15, "About", about.ToString(), rb.Get("ok")), null, null, Key.CtrlMask | Key.A)
             })
                  });
 
@@ -194,7 +205,7 @@ namespace LoadEnv.Utils
             return menu;
         }
 
-        private static StringBuilder About()
+        private static StringBuilder About(ILocalizer rb)
         {
 
             StringBuilder aboutMessage = new();
@@ -205,11 +216,56 @@ namespace LoadEnv.Utils
             aboutMessage.AppendLine(@" _____|  _|  _|    \_/    _____|  \___/   \__,_|  \__,_|");
             aboutMessage.AppendLine(@"");
             aboutMessage.AppendLine(@"");
-            aboutMessage.AppendLine(@"Load environment variables in the operating system.");
+            aboutMessage.AppendLine(rb.Get("msg.des"));
             aboutMessage.AppendLine(@"By danijerez (https://github.com/danijerez)");
             aboutMessage.AppendLine(@"");
             return aboutMessage;
         }
+
+
+        private static ProgressBar CreateProgressBar()
+        {
+            var pb = new ProgressBar()
+            {
+                X = 0,
+                Y = 1,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+            };
+
+            var loop = Application.MainLoop;
+
+            loop.AddTimeout(TimeSpan.FromMilliseconds(35), timer);
+
+            bool timer(MainLoop caller)
+            {
+                pb.Pulse();
+                return true;
+            }
+            return pb;
+        }
+
+        private static StatusBar CreateStatusBar(Settings s, ILocalizer rb)
+        {
+            return new StatusBar(new StatusItem[] {
+                new StatusItem(Key.Null, "EnvLoad v0.0.3", null),
+                new StatusItem(Key.Null, s.Locale, null),
+                new StatusItem(Key.F1, "~F1~ " + rb.Get("color"), () => {
+                    if (s.ColorScheme == null)
+                        return;
+                    if (s.ColorScheme.Equals("Base"))
+                        s.ColorScheme = "Error";
+                    else if (s.ColorScheme.Equals("Error"))
+                        s.ColorScheme = "Dialog";
+                    else if (s.ColorScheme.Equals("Dialog"))
+                        s.ColorScheme = "Menu";
+                    else
+                        s.ColorScheme = "Base";
+                    Application.Top.ColorScheme = Colors.ColorSchemes[s.ColorScheme];
+                })
+            });
+        }
+
 
     }
 }

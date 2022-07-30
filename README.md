@@ -1,8 +1,4 @@
-
-
-
-
-# <img src="img/perezoso.png" height = "25"> EnvLoad ~ [![Release](https://img.shields.io/badge/alpha-v0.0.2-orange)](https://github.com/danijerez/envload/releases) [![Release](https://img.shields.io/badge/dotnet-6.0-purple)](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) [![Twitter Follow](https://img.shields.io/twitter/follow/d4nijerez?style=social)](https://twitter.com/d4nijerez) ![GitHub Followers](https://img.shields.io/github/followers/danijerez?style=social) 
+# <img src="img/perezoso.png" height = "25"> EnvLoad ~ [![Release](https://img.shields.io/badge/alpha-v0.0.3-orange)](https://github.com/danijerez/envload/releases) [![Release](https://img.shields.io/badge/dotnet-6.0-purple)](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) [![Twitter Follow](https://img.shields.io/twitter/follow/d4nijerez?style=social)](https://twitter.com/d4nijerez) ![GitHub Followers](https://img.shields.io/github/followers/danijerez?style=social) 
 
 <b>EnvLoad</b> is a little portable program to loads environment variables into the operating system.
 Environment variables are stored in repositories (public or private) in json files classified by project and with the following structure.
@@ -45,8 +41,9 @@ Environment variables are stored in repositories (public or private) in json fil
 ### TargetFramework .net 6
 | Name        | Descripción | Version     |
 | ----------- | ----------- | ----------- |
-| [protobuf-net](https://github.com/protobuf-net/protobuf-net)      | Protocol Buffers library for idiomatic .NET                        |3.1.17|
-| [Terminal.Gui](https://github.com/migueldeicaza/gui.cs/)          | Console-based user interface toolkit for .NET applications.        |1.7.0|
-| [LibGit2Sharp](https://github.com/libgit2/libgit2sharp/)          | Git + .NET/Mono = ❤        |0.26.2|
+| [protobuf-net](https://github.com/protobuf-net/protobuf-net)          | Protocol Buffers library for idiomatic .NET                        |3.1.17|
+| [Terminal.Gui](https://github.com/migueldeicaza/gui.cs/)              | Console-based user interface toolkit for .NET applications.        |1.7.0|
+| [LibGit2Sharp](https://github.com/libgit2/libgit2sharp/)              | Git + .NET/Mono = ❤                                               |0.26.2|
+| [libc.translation](https://github.com/saeidjoker/libc.translation/)   | Translation using json                                             |6.0.1|
 
 ### If you use it or have any suggestions comment! ✌️

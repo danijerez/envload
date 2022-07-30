@@ -1,0 +1,78 @@
+﻿{
+  "en_US": {
+    "ok": "_Ok",
+    "yes": "_Yes",
+    "cancel": "_Cancel",
+    "color": "Color",
+    "config": "Config",
+    "name": "Name: ",
+    "value": "Value: ",
+    "repo": "Repo: ",
+    "work": "Work: ",
+    "branch": "Branch: ",
+    "git": "Git",
+    "user": "User: ",
+    "pass": "Pass: ",
+    "files": "Files",
+    "injected": "injected",
+    "deleted": "deleted",
+    "envs": "Enviroments",
+    "alerts": {
+      "info": "Info",
+      "error": "Error",
+      "fewsec": "the process may take a few seconds.",
+      "owsec": "the process may take a few seconds and overwrites the directory."
+    },
+    "menu": {
+      "enviroments": {
+        "title": "_Enviroments",
+        "options": {
+          "inyect": "_Inyect",
+          "clear": "_Clear"
+        },
+        "info": {
+          "inyect": "Inyect current enviroments selected in system.",
+          "clear": "Clear current enviroments selected in system."
+        }
+      },
+      "git": {
+        "title": "_Git",
+        "options": {
+          "clone": "_Clone"
+        },
+        "info": {
+          "clone": "Clone the configured repository."
+        }
+      },
+      "settings": {
+        "title": "_Settings",
+        "options": {
+          "reset": "_Reset",
+          "save": "_Save"
+        },
+        "info": {
+          "reset": "Reset settings fields.",
+          "save": "Save changes in settings file."
+        }
+      },
+      "help": {
+        "title": "_Help",
+        "options": {
+          "about": "_About..."
+        },
+        "info": {
+          "about": "About this app"
+        }
+      }
+    },
+    "msg": {
+      "no.path": "Before modify variables you need to select a directory",
+      "inyect": "Do you want to inject the listed enviroments into the system?",
+      "remove": "Do you want to remove the listed enviroments into the system?",
+      "clone": "Do you want to clone the repository?",
+      "clonein": "Repository in branch '{0}' cloned in \n\n '{1}'",
+      "des": "Load environment variables in the operating system.",
+      "enviroments": "Environment variables {0} in system"
+    }
+  }
+}

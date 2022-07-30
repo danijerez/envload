@@ -1,4 +1,5 @@
 ﻿
+using libc.translation;
 using LibGit2Sharp;
 using Serilog;
 using Terminal.Gui;
@@ -23,7 +24,7 @@ namespace LoadEnv.Utils
             };
         }
 
-        public static void Clone(TextField usernameField, TextField passwordField, TextField pathField, TextField urlField, TextField proyectField, TextField branchField, ListView listFiles)
+        public static void Clone(TextField usernameField, TextField passwordField, TextField pathField, TextField urlField, TextField proyectField, TextField branchField, ListView listFiles, ILocalizer rb)
         {
 
             string? username = usernameField.Text.ToString();
@@ -33,8 +34,9 @@ namespace LoadEnv.Utils
             string? branch = branchField.Text.ToString();
             string? proyect = proyectField.Text.ToString();
             string directory = path + @"\" + proyect;
-            int response = MessageBox.Query(70, 8, "Info", $"Do you want to clone the repository?\n" +
-                $"the process may take a few seconds and overwrites the directory: \n {directory}", "yes", "cancel");
+            int response = MessageBox.Query(70, 8, rb.Get("alerts.info"),
+                string.Format("{0}\n{1}\n\n{2}", rb.Get("msg.clone"), rb.Get("alerts.owsec"), directory),
+                rb.Get("yes"), rb.Get("cancel"));
 
             if (response.Equals(1))
                 return;
@@ -60,15 +62,15 @@ namespace LoadEnv.Utils
                     listFiles.SetSource(transform);
                 }
 
-                var message = $"Repository in branch '{branch}' cloned in: \n'{result}'";
+                var message = string.Format(rb.Get("msg.clonein"), branch, result);
                 Log.Information(message);
-                MessageBox.Query(70, 8, "Info", message, "ok");
+                MessageBox.Query(70, 8, rb.Get("alerts.info"), message, rb.Get("ok"));
 
             }
             catch (Exception e)
             {
                 Log.Debug(e.Message);
-                MessageBox.ErrorQuery(70, 8, "Error", e.Message, "ok");
+                MessageBox.ErrorQuery(100, 8, rb.Get("alerts.error"), e.Message, rb.Get("ok"));
             }
 
 
