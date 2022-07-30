@@ -32,15 +32,15 @@ Environment variables are stored in repositories (public or private) in json fil
 ### :page_with_curl: ~ system result
 <img src="img/system_envs.png">
 
-:floppy_disk: The configuration is saved in a binary file 'settings.bin' encrypted :shipit: with the library [protobuf-net](https://github.com/protobuf-net/protobuf-net). The interface is simple (improvable :suspect:), designed with the library [Terminal.Gui](https://github.com/migueldeicaza/gui.cs/) and the connection with the repositories is thanks to [LibGit2Sharp](https://github.com/libgit2/libgit2sharp/) .
+:floppy_disk: The configuration is saved in a binary file 'settings.bin' encrypted :shipit: with the library [protobuf-net](https://github.com/protobuf-net/protobuf-net). The interface is simple (improvable :suspect:), designed with the library [Terminal.Gui](https://github.com/migueldeicaza/gui.cs/) and the connection with the repositories is thanks to [LibGit2Sharp](https://github.com/libgit2/libgit2sharp/) :octocat:.
 
-:warning: requires administrator permissions defined in the [app.manifest](https://github.com/danijerez/envload/blob/main/src/app.manifest)).
+:warning: requires administrator permissions defined in the [app.manifest](https://github.com/danijerez/envload/blob/main/src/app.manifest).
 
 :construction: project is experimental and is in alpha phase.
 
 🌐 Languages
-* English (en_US) 
-* Chinese (zh_CN)
+* 🏈 English (en_US) 
+* 🐉 Chinese (zh_CN)
 
 ### TargetFramework .net 6
 | Name        | Descripción | Version     |
