@@ -73,6 +73,7 @@
       }
     },
     "msg": {
+      "notfound": "not found", 
       "nopath": "Before modify variables you need to select a directory",
       "inyect": "Do you want to inject the listed enviroments into the system?",
       "remove": "Do you want to remove the listed enviroments into the system?",
@@ -157,6 +158,7 @@
       }
     },
     "msg": {
+      "notfound": "未找到",
       "nopath": "在修改变量之前，您需要选择一个目录",
       "inyect": "您想将列出的环境注入系统吗？",
       "remove": "是否要将列出的环境删除到系统中？",

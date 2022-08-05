@@ -95,7 +95,7 @@ namespace LoadEnv.Utils
                         if (source != null && source.values != null)
                         {
                             if (source.project != null && source.environment != null)
-                                containerEnvs.Title = string.Format("{0}: {1} ~ {2}", rb.Get("envs"), source.project, source.environment);
+                                containerEnvs.Title = string.Format("{0} -> {1} ~ {2}", rb.Get("envs"), source.project, source.environment);
                             List<string> values = new();
 
                             dt.Columns.Add(rb.Get("name"));
@@ -112,6 +112,10 @@ namespace LoadEnv.Utils
                                 dt.Rows.Add(newRow);
                             });
 
+                        }
+                        else
+                        {
+                            containerEnvs.Title = string.Format("{0} -> {1} ~ {2}", rb.Get("envs"), 404, rb.Get("notfound"));
                         }
 
                         tableEnvs.Table = dt;
