@@ -2,7 +2,9 @@
 
 <b>EnvLoad</b> is a little portable program to loads environment variables into the operating system.
 Environment variables are stored in repositories (public or private) in json/yaml format files classified by project and with the following structure.
-[Example](https://github.com/danijerez/envload/blob/envs/envload_local.json)
+
+Examples ~ [Json](https://github.com/danijerez/envload/blob/envs/envload_example_1.json) /
+[Yaml](https://github.com/danijerez/envload/blob/envs/envload_example_2.yaml)
 ```json
 {
     "project": "envload 1",
