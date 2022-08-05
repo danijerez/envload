@@ -1,9 +1,11 @@
 ﻿using envload.Models;
 using libc.translation;
 using LoadEnv.Models;
-using ProtoBuf;
+using Serilog;
 using System.Text.Json;
 using Terminal.Gui;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace LoadEnv.Utils
 {
@@ -19,13 +21,12 @@ namespace LoadEnv.Utils
         private static string exampleRepoUrl = @"https://github.com/danijerez/envload";
         private static string pathFileSettings = pathSettings + @"\" + nameSettings;
         private static string defaultLocale = "en_US";
-        public static string version = "0.0.4";
-
+        public static string version = "0.0.5";
 
         public static void Save(string? path, object obj)
         {
             if (path != null)
-                using (var file = File.Create(path)) { Serializer.Serialize(file, obj); }
+                using (var file = File.Create(path)) { ProtoBuf.Serializer.Serialize(file, obj); }
         }
 
         public static void InyectEnviroments(ListView listFiles, bool clear, Settings s, ILocalizer rb)
@@ -44,7 +45,8 @@ namespace LoadEnv.Utils
                     {
                         using StreamReader r = new(pathFiles + @"\" + path);
 
-                        EnvironmentDto? source = JsonSerializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
+                        var source = TryDeserialiceEnviroments(r);
+
                         if (source != null && source.values != null)
                         {
 
@@ -54,11 +56,11 @@ namespace LoadEnv.Utils
                             .ForEach(x =>
                             {
                                 if (x.name != null)
-                                    Environment.SetEnvironmentVariable(x.name, !clear ? x.value : null, EnvironmentVariableTarget.Machine);
+                                    Parallel.Invoke(() => Environment.SetEnvironmentVariable(x.name, !clear ? x.value : null, EnvironmentVariableTarget.Machine));
                             });
 
                             int result = MessageBox.Query(200, source.values.DistinctBy(x => x.name).Count() + 6, rb.Get("alerts.info"), string.Format(rb.Get("msg.enviroments"), text) +
-                                $"\n{string.Concat(source.values.DistinctBy(x => x.name).Select((a) => string.Format("\n{0}: {1}", a.name, a.value)))}", rb.Get("ok"));
+                                $"\n{string.Concat(source.values.Where(x => x.name != null).DistinctBy(x => x.name).Select((a) => string.Format("\n{0}{1}", a.name, new string(' ', 50 - a.name.Length))))}", rb.Get("ok"));
 
                         }
 
@@ -92,7 +94,7 @@ namespace LoadEnv.Utils
             if (File.Exists(pathFileSettings))
                 using (var file = File.OpenRead(pathFileSettings))
                 {
-                    s = Serializer.Deserialize<Settings>(file);
+                    s = ProtoBuf.Serializer.Deserialize<Settings>(file);
                     s.PathSettings = pathSettings;
                     s.Workspace = workspace;
                 }
@@ -103,6 +105,32 @@ namespace LoadEnv.Utils
             }
 
             return s;
+        }
+
+        public static EnvironmentDto? TryDeserialiceEnviroments(StreamReader r)
+        {
+            try
+            {
+                return JsonSerializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    var deserializer = new DeserializerBuilder()
+                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .Build();
+                    r.BaseStream.Position = 0;
+                    return deserializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
+                }
+                catch (Exception e2)
+                {
+                    Log.Warning(e2.Message);
+                    return null;
+                }
+
+            }
+
         }
 
     }

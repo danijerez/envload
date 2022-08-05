@@ -14,7 +14,7 @@ public class Program
 
         Log.Logger = new LoggerConfiguration()
                  .MinimumLevel.Debug()
-                 .WriteTo.File(FileUtils.directory + @"\log\envload_.txt")
+                 .WriteTo.File(FileUtils.directory + @"\log\envload_.txt", rollingInterval: RollingInterval.Day)
                  .CreateLogger();
 
         top.ColorScheme = Colors.ColorSchemes[s.ColorScheme];

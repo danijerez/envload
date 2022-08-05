@@ -1,4 +1,5 @@
 ﻿
+using envload.Utils;
 using libc.translation;
 using LibGit2Sharp;
 using Serilog;
@@ -34,8 +35,8 @@ namespace LoadEnv.Utils
             string? branch = branchField.Text.ToString();
             string? proyect = proyectField.Text.ToString();
             string directory = path + @"\" + proyect;
-            int response = MessageBox.Query(70, 8, rb.Get("alerts.info"),
-                string.Format("{0}\n{1}\n\n{2}", rb.Get("msg.clone"), rb.Get("alerts.owsec"), directory),
+            int response = MessageBox.Query(100, 8, rb.Get("alerts.info"),
+                string.Format("{0}\n{1}\n\n{2}", rb.Get("msg.clone"), rb.Get("alerts.owsec"), directory.Truncate(80)),
                 rb.Get("yes"), rb.Get("cancel"));
 
             if (response.Equals(1))

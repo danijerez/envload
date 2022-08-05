@@ -5,10 +5,10 @@
     "cancel": "_Cancel",
     "color": "Color",
     "config": "Config",
-    "name": "Name",
-    "value": "Value",
-    "repo": "Repo",
-    "work": "Work",
+    "name": "Name ",
+    "value": "Value ",
+    "repo": "Repo ",
+    "work": "Work ",
     "branch": "Branch ",
     "about": "About",
     "reset": "Reset",
@@ -27,7 +27,7 @@
       "info": "Info",
       "error": "Error",
       "fewsec": "the process may take a few seconds.",
-      "owsec": "the process may take a few seconds and overwrites the directory."
+      "owsec": "the process may take a few seconds and overwrites the directory"
     },
     "menu": {
       "enviroments": {
@@ -37,8 +37,8 @@
           "clear": "_Clear"
         },
         "info": {
-          "inyect": "Inyect current enviroments selected in system.",
-          "clear": "Clear current enviroments selected in system."
+          "inyect": "Inyect current enviroments selected in system",
+          "clear": "Clear current enviroments selected in system"
         }
       },
       "git": {
@@ -47,7 +47,7 @@
           "clone": "_Clone"
         },
         "info": {
-          "clone": "Clone the configured repository."
+          "clone": "Clone the configured repository"
         }
       },
       "settings": {
@@ -58,8 +58,8 @@
           "languages": "_Languages"
         },
         "info": {
-          "reset": "Reset settings fields.",
-          "save": "Save changes in settings file."
+          "reset": "Reset settings fields",
+          "save": "Save changes in settings file"
         }
       },
       "help": {
@@ -73,14 +73,14 @@
       }
     },
     "msg": {
-      "no.path": "Before modify variables you need to select a directory",
+      "nopath": "Before modify variables you need to select a directory",
       "inyect": "Do you want to inject the listed enviroments into the system?",
       "remove": "Do you want to remove the listed enviroments into the system?",
       "clone": "Do you want to clone the repository?",
       "clonein": "Repository in branch '{0}' cloned in \n\n '{1}'",
       "des": "Load environment variables in the operating system.",
       "enviroments": "Environment variables {0} in system",
-      "reset": "The application needs to be restarted to apply the changes."
+      "reset": "The application needs to be restarted to apply the changes"
     }
   },
   "zh_CN": {
@@ -88,12 +88,12 @@
     "yes": "_是的",
     "cancel": "_取消",
     "color": "颜色",
-    "config": "配置",
-    "name": "姓名",
+    "config": "配置 ",
+    "name": "姓名 ",
     "value": "价值",
-    "repo": "存储库",
-    "work": "工作",
-    "branch": "分支",
+    "repo": "存储库 ",
+    "work": "工作 ",
+    "branch": "分支 ",
     "about": "关于",
     "reset": "重置",
     "git": "吉特",
@@ -157,7 +157,7 @@
       }
     },
     "msg": {
-      "no.path": "在修改变量之前，您需要选择一个目录",
+      "nopath": "在修改变量之前，您需要选择一个目录",
       "inyect": "您想将列出的环境注入系统吗？",
       "remove": "是否要将列出的环境删除到系统中？",
       "clone": "您要克隆存储库吗？",

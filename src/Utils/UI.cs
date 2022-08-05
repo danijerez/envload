@@ -1,10 +1,8 @@
-﻿using envload.Models;
-using libc.translation;
+﻿using libc.translation;
 using LoadEnv.Models;
 using Serilog;
 using System.Data;
 using System.Text;
-using System.Text.Json;
 using Terminal.Gui;
 
 namespace LoadEnv.Utils
@@ -51,7 +49,7 @@ namespace LoadEnv.Utils
             var containerEnvs = new FrameView(rb.Get("envs")) { X = Pos.Right(containerConfig), Y = 2, Width = Dim.Fill(), Height = Dim.Fill() - 1 };
 
             TableView tableEnvs = new() { X = 1, Y = 0, Width = Dim.Fill(), Height = Dim.Fill() };
-            var listFiles = ListFiles(tableEnvs, pathFiles, rb);
+            var listFiles = ListFiles(containerEnvs, tableEnvs, pathFiles, rb);
 
 
             containerFiles.Add(listFiles);
@@ -63,7 +61,7 @@ namespace LoadEnv.Utils
             return container;
         }
 
-        private static ListView ListFiles(TableView tableEnvs, string pathFiles, ILocalizer rb)
+        private static ListView ListFiles(FrameView containerEnvs, TableView tableEnvs, string pathFiles, ILocalizer rb)
         {
             ListView listFiles = new()
             {
@@ -92,14 +90,14 @@ namespace LoadEnv.Utils
                     using StreamReader r = new(pathFiles + @"\" + path);
                     try
                     {
-                        EnvironmentDto? source = JsonSerializer.Deserialize<EnvironmentDto>(r.ReadToEnd());
-
+                        var source = FileUtils.TryDeserialiceEnviroments(r);
+                        var dt = new DataTable();
                         if (source != null && source.values != null)
                         {
+                            if (source.project != null && source.environment != null)
+                                containerEnvs.Title = string.Format("{0}: {1} ~ {2}", rb.Get("envs"), source.project, source.environment);
                             List<string> values = new();
 
-
-                            var dt = new DataTable();
                             dt.Columns.Add(rb.Get("name"));
                             dt.Columns.Add(rb.Get("value"));
 
@@ -114,11 +112,9 @@ namespace LoadEnv.Utils
                                 dt.Rows.Add(newRow);
                             });
 
-                            tableEnvs.Table = dt;
-                            tableEnvs.EnsureValidScrollOffsets();
-                            tableEnvs.Redraw(tableEnvs.Bounds);
-
                         }
+
+                        tableEnvs.Table = dt;
                     }
                     catch (Exception e)
                     {
@@ -163,13 +159,13 @@ namespace LoadEnv.Utils
             var inyect = new MenuItem(rb.Get("menu.enviroments.options.inyect"), rb.Get("menu.enviroments.info.inyect"), () =>
             {
                 if (listFiles.Source == null)
-                    MessageBox.Query(70, 8, rb.Get("alerts.info"), rb.Get("msg.no.path"), rb.Get("ok"));
+                    MessageBox.Query(70, 8, rb.Get("alerts.info"), rb.Get("msg.nopath"), rb.Get("ok"));
                 else
                 {
                     int response = MessageBox.Query(70, 8, rb.Get("alerts.info"), string.Format("{0}\n{1}", rb.Get("msg.inyect"), rb.Get("alerts.fewsec")),
                         rb.Get("yes"), rb.Get("cancel"));
                     if (response.Equals(0))
-                        Parallel.Invoke(() => FileUtils.InyectEnviroments(listFiles, false, s, rb));
+                        FileUtils.InyectEnviroments(listFiles, false, s, rb);
                 }
 
             });
@@ -177,13 +173,13 @@ namespace LoadEnv.Utils
             var clear = new MenuItem(rb.Get("menu.enviroments.options.clear"), rb.Get("menu.enviroments.info.clear"), () =>
             {
                 if (listFiles.Source == null)
-                    MessageBox.Query(70, 8, rb.Get("alerts.info"), rb.Get("msg.no.path"), rb.Get("ok"));
+                    MessageBox.Query(70, 8, rb.Get("alerts.info"), rb.Get("msg.nopath"), rb.Get("ok"));
                 else
                 {
                     int response = MessageBox.Query(70, 8, rb.Get("alerts.info"), string.Format("{0}\n{1}", rb.Get("msg.remove"), rb.Get("alerts.fewsec")),
                         rb.Get("yes"), rb.Get("cancel"));
                     if (response.Equals(0))
-                        Parallel.Invoke(() => FileUtils.InyectEnviroments(listFiles, true, s, rb));
+                        FileUtils.InyectEnviroments(listFiles, true, s, rb);
                 }
 
             });
@@ -290,7 +286,7 @@ namespace LoadEnv.Utils
                 System.Diagnostics.Process.Start(FileUtils.directory + "envload");
                 Environment.Exit(0);
             }
-            
+
         }
     }
 }
