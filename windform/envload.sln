@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32811.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "envload", "src\envload.csproj", "{465CBD21-CFA1-4E93-ACDA-5FA1510A6AA2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{465CBD21-CFA1-4E93-ACDA-5FA1510A6AA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{465CBD21-CFA1-4E93-ACDA-5FA1510A6AA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{465CBD21-CFA1-4E93-ACDA-5FA1510A6AA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{465CBD21-CFA1-4E93-ACDA-5FA1510A6AA2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {66DA321C-D223-42E4-A630-61E6043B8E6C}
+	EndGlobalSection
+EndGlobal
